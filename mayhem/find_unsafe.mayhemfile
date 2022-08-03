@@ -1,0 +1,7 @@
+project: cargo-geiger
+target: find-unsafe
+
+cmds:
+  - cmd: /find_unsafe
+  - cmd: /find_unsafe_no_inst @@
+    libfuzzer: false
