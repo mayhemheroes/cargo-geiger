@@ -1,0 +1,12 @@
+{
+  "workspace": "mayhemheroes",
+  "project": "cargo-geiger",
+  "target": "find-unsafe",
+  "run_id": "33",
+  "ci_url": "https://github.com:443/mayhemheroes/cargo-geiger//actions/runs/7192058771",
+  "run_image_name": "ghcr.io/mayhemheroes/cargo-geiger:master",
+  "run_image_with_digest": "ghcr.io/mayhemheroes/cargo-geiger@sha256:8867866b3f70bf697a67dbcd3a7eade0128f09ceb10ec7ab045ae1b3e8ea838e",
+  "git_repo_url": "git@github.com:mayhemheroes/cargo-geiger.git",
+  "git_revision": "39cfa23d989aef0beed5303e601bee3751cb8c7c",
+  "target_executable": null
+}

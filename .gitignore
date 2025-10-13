@@ -16,3 +16,4 @@
 .vscode/
 .idea/
 cobertura.xml
+rlenv/mayhem/data/testsuite
