@@ -16,15 +16,23 @@ RUN rustup toolchain install nightly
 # Copy source code to standardized location
 COPY . /rlenv/source/cargo-geiger
 
-# Make /rlenv/source world-writable so unprivileged users can build
-RUN chmod -R 777 /rlenv/source
-
 # Set working directory
 WORKDIR /rlenv/source/cargo-geiger
+
+# Build fuzz target using cargo-fuzz to cache all dependencies
+# This ensures all cargo dependencies are downloaded and cached during image build
+RUN cd geiger/fuzz && \
+    cargo +nightly fuzz build --target x86_64-unknown-linux-gnu find_unsafe && \
+    mv target/x86_64-unknown-linux-gnu/release/find_unsafe /find_unsafe && \
+    chmod 777 /find_unsafe
+
+# Make /rlenv/source world-writable so unprivileged users can build
+RUN chmod -R 777 /rlenv/source
 
 # Copy rlenv directory from build context to /rlenv in the image
 # This must be the final step to include all test data and scripts
 COPY rlenv /rlenv
 
-# Note: Build is done via build.sh script, not during image creation
-# This allows for patching source code before building
+# Note: Initial build creates binary and caches all dependencies
+# The build.sh script can rebuild from source using the cached dependencies
+# This allows for patching source code and rebuilding without network access

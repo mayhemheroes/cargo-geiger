@@ -10,32 +10,20 @@ set -euo pipefail
 # Change to the source directory
 cd /rlenv/source/cargo-geiger
 
-# Build instrumented harnesses
-echo "Building instrumented harnesses..."
-bash -c "pushd geiger/fuzz && cargo +nightly -Z sparse-registry fuzz build --target x86_64-unknown-linux-gnu && popd"
-mv geiger/fuzz/target/x86_64-unknown-linux-gnu/release/find_unsafe /find_unsafe
-chmod 777 /find_unsafe
-echo "Instrumented harness build complete"
+# Build fuzz target using cargo-fuzz
+echo "Building fuzz target..."
+cd geiger/fuzz
+cargo +nightly fuzz build --target x86_64-unknown-linux-gnu find_unsafe
 
-# Build non-instrumented harnesses
-echo "Building non-instrumented harnesses..."
-export RUSTFLAGS="--cfg fuzzing -Clink-dead-code -Cdebug-assertions -C codegen-units=1"
-bash -c "pushd geiger/fuzz && cargo +nightly -Z sparse-registry build --release --target x86_64-unknown-linux-gnu && popd"
-mv geiger/fuzz/target/x86_64-unknown-linux-gnu/release/find_unsafe /find_unsafe_no_inst
-chmod 777 /find_unsafe_no_inst
-echo "Non-instrumented harness build complete"
+# Overwrite existing binary with new one
+cp target/x86_64-unknown-linux-gnu/release/find_unsafe /find_unsafe
+echo "Fuzz target build complete"
 
-# Verify build artifacts exist
+# Verify build artifact exists
 if [ ! -f /find_unsafe ]; then
-    echo "Error: Instrumented harness /find_unsafe not found"
+    echo "Error: Fuzz target /find_unsafe not found"
     exit 1
 fi
 
-if [ ! -f /find_unsafe_no_inst ]; then
-    echo "Error: Non-instrumented harness /find_unsafe_no_inst not found"
-    exit 1
-fi
-
-echo "Build successful! Artifacts:"
-echo "  - /find_unsafe (instrumented)"
-echo "  - /find_unsafe_no_inst (non-instrumented)"
+echo "Build successful! Artifact:"
+echo "  - /find_unsafe"
