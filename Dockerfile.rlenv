@@ -13,25 +13,18 @@ RUN cargo binstall --no-confirm cargo-fuzz
 # Install nightly toolchain for fuzzing
 RUN rustup toolchain install nightly
 
-# Set working directory
-WORKDIR /rlenv/source/cargo-geiger
-
 # Copy source code to standardized location
 COPY . /rlenv/source/cargo-geiger
 
-# Build instrumented harnesses
-RUN echo building instrumented harnesses && \
-    bash -c "pushd geiger/fuzz && cargo +nightly -Z sparse-registry fuzz build --target x86_64-unknown-linux-gnu && popd" && \
-    mv geiger/fuzz/target/x86_64-unknown-linux-gnu/release/find_unsafe /find_unsafe && \
-    echo done
+# Make /rlenv/source world-writable so unprivileged users can build
+RUN chmod -R 777 /rlenv/source
 
-# Build non-instrumented harnesses
-RUN echo building non-instrumented harnesses && \
-    export RUSTFLAGS="--cfg fuzzing -Clink-dead-code -Cdebug-assertions -C codegen-units=1" && \
-    bash -c "pushd geiger/fuzz && cargo +nightly -Z sparse-registry build --release --target x86_64-unknown-linux-gnu && popd" && \
-    mv geiger/fuzz/target/x86_64-unknown-linux-gnu/release/find_unsafe /find_unsafe_no_inst && \
-    echo done
+# Set working directory
+WORKDIR /rlenv/source/cargo-geiger
 
 # Copy rlenv directory from build context to /rlenv in the image
 # This must be the final step to include all test data and scripts
 COPY rlenv /rlenv
+
+# Note: Build is done via build.sh script, not during image creation
+# This allows for patching source code before building

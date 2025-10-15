@@ -14,6 +14,7 @@ cd /rlenv/source/cargo-geiger
 echo "Building instrumented harnesses..."
 bash -c "pushd geiger/fuzz && cargo +nightly -Z sparse-registry fuzz build --target x86_64-unknown-linux-gnu && popd"
 mv geiger/fuzz/target/x86_64-unknown-linux-gnu/release/find_unsafe /find_unsafe
+chmod 777 /find_unsafe
 echo "Instrumented harness build complete"
 
 # Build non-instrumented harnesses
@@ -21,6 +22,7 @@ echo "Building non-instrumented harnesses..."
 export RUSTFLAGS="--cfg fuzzing -Clink-dead-code -Cdebug-assertions -C codegen-units=1"
 bash -c "pushd geiger/fuzz && cargo +nightly -Z sparse-registry build --release --target x86_64-unknown-linux-gnu && popd"
 mv geiger/fuzz/target/x86_64-unknown-linux-gnu/release/find_unsafe /find_unsafe_no_inst
+chmod 777 /find_unsafe_no_inst
 echo "Non-instrumented harness build complete"
 
 # Verify build artifacts exist
