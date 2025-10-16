@@ -16,7 +16,7 @@ cd geiger/fuzz
 cargo +nightly fuzz build --target x86_64-unknown-linux-gnu find_unsafe
 
 # Overwrite existing binary with new one
-cp target/x86_64-unknown-linux-gnu/release/find_unsafe /find_unsafe
+cp -f target/x86_64-unknown-linux-gnu/release/find_unsafe /find_unsafe
 echo "Fuzz target build complete"
 
 # Verify build artifact exists
