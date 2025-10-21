@@ -4,6 +4,9 @@
 
 FROM rust:latest
 
+# Install system dependencies including jq for validation
+RUN apt-get update && apt-get install -y jq && rm -rf /var/lib/apt/lists/*
+
 # Install cargo-binstall for faster binary installations
 RUN curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
 
