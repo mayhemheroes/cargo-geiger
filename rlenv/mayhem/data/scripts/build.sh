@@ -10,14 +10,16 @@ set -euo pipefail
 # Change to the source directory
 cd /rlenv/source/cargo-geiger
 
-# Build fuzz target using cargo-fuzz
-echo "Building fuzz target..."
+# Build fuzz target using cargo-fuzz in development mode (unoptimized)
+# This helps trigger stack exhaustion bugs by using larger stack frames
+echo "Building fuzz target with --dev flag..."
 cd geiger/fuzz
-cargo +nightly fuzz build --target x86_64-unknown-linux-gnu find_unsafe
+cargo +nightly fuzz build --dev --target x86_64-unknown-linux-gnu find_unsafe
 
 # Overwrite existing binary with new one
+# Note: --dev builds to debug directory instead of release
 # Use cat for busybox compatibility when we can't remove the file
-cat target/x86_64-unknown-linux-gnu/release/find_unsafe > /find_unsafe
+cat target/x86_64-unknown-linux-gnu/debug/find_unsafe > /find_unsafe
 echo "Fuzz target build complete"
 
 # Verify build artifact exists

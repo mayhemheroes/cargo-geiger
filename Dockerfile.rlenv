@@ -22,11 +22,11 @@ COPY . /rlenv/source/cargo-geiger
 # Set working directory
 WORKDIR /rlenv/source/cargo-geiger
 
-# Build fuzz target using cargo-fuzz to cache all dependencies
+# Build fuzz target using cargo-fuzz in development mode (unoptimized) to trigger stack exhaustion bugs
 # This ensures all cargo dependencies are downloaded and cached during image build
 RUN cd geiger/fuzz && \
-    cargo +nightly fuzz build --target x86_64-unknown-linux-gnu find_unsafe && \
-    mv target/x86_64-unknown-linux-gnu/release/find_unsafe /find_unsafe && \
+    cargo +nightly fuzz build --dev --target x86_64-unknown-linux-gnu find_unsafe && \
+    mv target/x86_64-unknown-linux-gnu/debug/find_unsafe /find_unsafe && \
     chmod 777 /find_unsafe
 
 # Make /rlenv/source world-writable so unprivileged users can build
