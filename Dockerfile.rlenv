@@ -16,6 +16,9 @@ RUN cargo binstall --no-confirm cargo-fuzz
 # Install nightly toolchain for fuzzing
 RUN rustup toolchain install nightly
 
+# Copy MTV binary for test execution and validation
+COPY --from="us-east4-docker.pkg.dev/forallsecure-1/rlenv-staging/rlenv-mtv-static:latest" /rlenv/bin/mtv /rlenv/bin/mtv
+
 # Copy source code to standardized location
 COPY . /rlenv/source/cargo-geiger
 
