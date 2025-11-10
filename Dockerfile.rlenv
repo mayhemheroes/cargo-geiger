@@ -39,6 +39,4 @@ RUN chmod -R 777 /rlenv/source
 # This must be the final step to include all test data and scripts
 COPY rlenv /rlenv
 
-# Note: Initial build creates binary and caches all dependencies
-# The build.sh script can rebuild from source using the cached dependencies
-# This allows for patching source code and rebuilding without network access
+WORKDIR /
