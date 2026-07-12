@@ -1,0 +1,5 @@
+project: cargo-geiger
+target: find-unsafe
+
+cmds:
+  - cmd: /mayhem/find_unsafe
